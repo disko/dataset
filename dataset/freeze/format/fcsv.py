@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import base64
 import csv
 from datetime import datetime, date
 
@@ -19,7 +20,10 @@ def value_to_str(value):
     if isinstance(value, date):
         return text_type(value.isoformat())
     if not PY3 and hasattr(value, 'encode'):
-        return value.encode('utf-8')
+        try:
+            return value.encode('utf-8')
+        except UnicodeDecodeError:
+            return u'base64:{}'.format(base64.b64encode(value))
     if value is None:
         return ''
     return value
